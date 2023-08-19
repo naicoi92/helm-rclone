@@ -3,7 +3,17 @@ entries:
   helm-rclone:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2023-08-20T00:33:30.976145+07:00"
+    created: "2023-08-20T00:57:11.803278+07:00"
+    description: A Helm chart for Rclone Auto Sync
+    digest: 33f2036117a6aff6634076667f956c490ff67324d80e2fb61a8fabbd0d39d18a
+    name: helm-rclone
+    type: application
+    urls:
+    - https://naicoi92.github.io/helm-rclone/helm-rclone-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2023-08-20T00:57:11.802976+07:00"
     description: A Helm chart for Rclone Auto Sync
     digest: da1a8c6f3f8c206852cf6c323f31b033d4b980924453d3c2fc12f7bde15b1dd1
     name: helm-rclone
@@ -11,4 +21,4 @@ entries:
     urls:
     - https://naicoi92.github.io/helm-rclone/helm-rclone-0.1.0.tgz
     version: 0.1.0
-generated: "2023-08-20T00:33:30.975577+07:00"
+generated: "2023-08-20T00:57:11.802068+07:00"
