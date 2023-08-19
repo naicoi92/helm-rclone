@@ -4,9 +4,11 @@
 
 name: rclone1
 image: rclone/rclone
-suspend: false
-from: google
-to: local
+
+sync:
+  suspend: false
+  from: google
+  to: local
 
 cronjob:
   enable: false

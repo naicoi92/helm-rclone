@@ -1,0 +1,48 @@
+{{- if .Values.cronjob.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Values.name }}
+spec:
+  schedule: {{ .Values.cronjob.schedule }}
+  concurrencyPolicy: Replace
+  suspend: {{ .Values.sync.suspend }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          {{- if or (eq .Values.sync.from "local") (eq .Values.sync.to "local") }}
+          volumes:
+            - name: data
+              hostPath:
+                  path: {{ .Values.local.path }}
+                  type: DirectoryOrCreate
+          {{- end }}
+          containers:
+            - name: {{ .Values.name }}
+              image: {{ .Values.image }}
+              command:
+                - rclone
+                - sync
+                - '-vv'
+                {{- if eq .Values.sync.from "local" }}
+                - '/data'
+                {{- else }}
+                - '{{ .Values.sync.from }}:'
+                {{- end }}
+                {{- if eq .Values.sync.to "local" }}
+                - '/data'
+                {{- else }}
+                - '{{ .Values.sync.to }}:'
+                {{- end }}
+              {{- if or (eq .Values.sync.from "local") (eq .Values.sync.to "local") }}
+              volumeMounts:
+                - mountPath: /data
+                  name: data
+              {{- end }}
+              envFrom:
+                - configMapRef:
+                    name: {{ .Values.name }}
+              imagePullPolicy: Always
+          restartPolicy: Never
+{{- end }}

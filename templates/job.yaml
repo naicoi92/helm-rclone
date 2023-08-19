@@ -4,9 +4,10 @@ kind: Job
 metadata:
   name: {{ .Values.name }}
 spec:
+  suspend: {{ .Values.sync.suspend }}
   template:
     spec:
-      {{- if or (eq .Values.from "local") (eq .Values.to "local") }}
+      {{- if or (eq .Values.sync.from "local") (eq .Values.sync.to "local") }}
       volumes:
         - name: data
           hostPath:
@@ -20,17 +21,17 @@ spec:
             - rclone
             - sync
             - '-vv'
-            {{- if eq .Values.from "local" }}
+            {{- if eq .Values.sync.from "local" }}
             - '/data'
             {{- else }}
-            - '{{ .Values.from }}:'
+            - '{{ .Values.sync.from }}:'
             {{- end }}
-            {{- if eq .Values.to "local" }}
+            {{- if eq .Values.sync.to "local" }}
             - '/data'
             {{- else }}
-            - '{{ .Values.to }}:'
+            - '{{ .Values.sync.to }}:'
             {{- end }}
-          {{- if or (eq .Values.from "local") (eq .Values.to "local") }}
+          {{- if or (eq .Values.sync.from "local") (eq .Values.sync.to "local") }}
           volumeMounts:
             - mountPath: /data
               name: data
@@ -40,5 +41,4 @@ spec:
                 name: {{ .Values.name }}
           imagePullPolicy: Always
       restartPolicy: Never
-  suspend: {{ .Values.suspend }}
 {{- end }}
