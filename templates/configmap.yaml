@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
 data:
   RCLONE_CONFIG_GOOGLE_TYPE: drive
   RCLONE_CONFIG_GOOGLE_TEAM_DRIVE: {{ .Values.google.teamDrive }}
