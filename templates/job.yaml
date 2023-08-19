@@ -11,6 +11,7 @@ spec:
         - name: data
           hostPath:
               path: {{ .Values.local.path }}
+              type: DirectoryOrCreate
       {{- end }}
       containers:
         - name: {{ .Values.name }}
