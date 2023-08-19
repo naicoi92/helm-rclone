@@ -7,7 +7,7 @@ data:
   RCLONE_CONFIG_GOOGLE_TEAM_DRIVE: {{ .Values.google.teamDrive }}
   RCLONE_CONFIG_GOOGLE_TOKEN: >-
     {"access_token":"","token_type":"Bearer","refresh_token":"{{ .Values.google.refreshToken }}","expiry":"2023-08-04T18:32:56.529694+07:00"}
-  {{- if .Values.google.custom.enabled }}
+  {{- if .Values.google.custom.enable }}
   RCLONE_CONFIG_GOOGLE_CLIENT_ID: {{ .Values.google.custom.clientId }}
   RCLONE_CONFIG_GOOGLE_CLIENT_SECRET: {{ .Values.google.custom.secret }}
   {{- end }}
@@ -16,7 +16,7 @@ data:
   RCLONE_CONFIG_ONEDRIVE_DRIVE_TYPE: {{ .Values.onedrive.driveType }}
   RCLONE_CONFIG_ONEDRIVE_TOKEN: >-
     {"access_token":"","token_type":"Bearer","refresh_token":"{{ .Values.onedrive.refreshToken }}","expiry":"2023-08-10T16:18:37.897777+07:00"}
-  {{- if .Values.onedrive.custom.enabled }}
+  {{- if .Values.onedrive.custom.enable }}
   RCLONE_CONFIG_ONEDRIVE_CLIENT_ID: {{ .Values.onedrive.custom.clientId }}
   RCLONE_CONFIG_ONEDRIVE_CLIENT_SECRET: {{ .Values.onedrive.custom.secret }}
   {{- end }}
