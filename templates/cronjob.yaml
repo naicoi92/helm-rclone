@@ -2,47 +2,66 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ .Values.name }}
+  name: {{ .Release.Name }}
 spec:
   schedule: {{ .Values.cronjob.schedule }}
   concurrencyPolicy: Replace
-  suspend: {{ .Values.sync.suspend }}
+  suspend: {{ .Values.rclone.suspend }}
   jobTemplate:
     spec:
       template:
         spec:
-          {{- if or (eq .Values.sync.from "local") (eq .Values.sync.to "local") }}
           volumes:
-            - name: data
+          {{- if or (eq .Values.rclone.from "local") (eq .Values.rclone.to "local") }}
+            - name: local
               hostPath:
                   path: {{ .Values.local.path }}
                   type: DirectoryOrCreate
           {{- end }}
+          {{- if or (eq .Values.rclone.from "volume") (eq .Values.rclone.to "volume") }}
+            - name: volume
+              persistentVolumeClaim:
+                claimName: {{ .Values.volume.claim.name }}
+          {{- end }}
           containers:
-            - name: {{ .Values.name }}
+            - name: {{ .Release.Name }}
               image: {{ .Values.image }}
               command:
                 - rclone
-                - sync
+                - {{ .Values.rclone.action }}
+                {{- if not .Values.rclone.debug }}
                 - '-vv'
-                {{- if eq .Values.sync.from "local" }}
-                - '/data'
-                {{- else }}
-                - '{{ .Values.sync.from }}:'
                 {{- end }}
-                {{- if eq .Values.sync.to "local" }}
+                {{- if eq .Values.rclone.from "local" }}
                 - '/data'
+                {{ else if eq .Values.rclone.from "volume" }}
+                - '/volume{{ .Values.volume.path }}'
+                {{ else if eq .Values.rclone.from "s3" }}
+                - 's3:{{ .Values.s3.bucket }}{{ .Values.s3.path }}'
                 {{- else }}
-                - '{{ .Values.sync.to }}:'
+                - '{{ .Values.rclone.from }}:'
                 {{- end }}
-              {{- if or (eq .Values.sync.from "local") (eq .Values.sync.to "local") }}
+                {{- if eq .Values.rclone.to "local" }}
+                - '/data'
+                {{ else if eq .Values.rclone.to "volume" }}
+                - '/volume{{ .Values.volume.path }}'
+                {{ else if eq .Values.rclone.to "s3" }}
+                - 's3:{{ .Values.s3.bucket }}{{ .Values.s3.path }}'
+                {{- else }}
+                - '{{ .Values.rclone.to }}:'
+                {{- end }}
               volumeMounts:
+              {{- if or (eq .Values.rclone.from "local") (eq .Values.rclone.to "local") }}
                 - mountPath: /data
-                  name: data
+                  name: local
+              {{- end }}
+              {{- if or (eq .Values.rclone.from "volume") (eq .Values.rclone.to "volume") }}
+                - mountPath: /volume
+                  name: volume
               {{- end }}
               envFrom:
                 - configMapRef:
-                    name: {{ .Values.name }}
+                    name: {{ .Release.Name }}
               imagePullPolicy: Always
           restartPolicy: Never
 {{- end }}
